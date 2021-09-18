@@ -1,0 +1,26 @@
+{
+  "name": "demo-intuit-auto",
+  "version": "0.0.0",
+  "description": "`intuit/auto` demo for release workflow automation",
+  "author": {
+    "name": "Adrian",
+    "email": "adrian.pdmh@gmail.com",
+    "url": "https://adrian-pdmh.medium.com/"
+  },
+  "repository": {
+    "url": "https://github.com/adrianpdm/demo-intuit-auto"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.16.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=1.22.10"
+  },
+  "devDependencies": {
+    "@auto-it/git-tag": "^10.32.0",
+    "auto": "^10.32.0"
+  },
+  "scripts": {
+    "auto": "auto"
+  }
+}

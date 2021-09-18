@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    "git-tag",
+    "released"
+  ],
+  "owner": "adrianpdm",
+  "repo": "demo-intuit-auto",
+  "onlyPublishWithReleaseLabel": false,
+  "baseBranch": "main",
+  "prereleaseBranches": ["next"],
+  "name": "adrianpdm",
+  "email": "adrian.padmodihardjo@gmail.com",
+  "author": "adrianpdm <adrian.padmodihardjo@gmail.com>"
+}

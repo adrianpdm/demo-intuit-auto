@@ -1,0 +1,72 @@
+name: "Create Release"
+
+on:
+  push:
+    branches:
+      - main
+      - next
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setup env
+        shell: bash
+        run: |
+          export CURRENT_BRANCH=${GITHUB_REF##*/} 
+          echo "CURRENT_BRANCH=$CURRENT_BRANCH" >> $GITHUB_ENV
+
+          if [ "$CURRENT_BRANCH" == "main" ]
+          then
+            export EXCLUDED_RELEASES=prerelease
+            echo "EXCLUDED_RELEASES=$EXCLUDED_RELEASES" >> $GITHUB_ENV
+          fi
+
+      - name: Prepare repository
+        run: git fetch --unshallow --tags
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: npm-deps-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            npm-deps-${{ hashFiles('yarn.lock') }}
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          yarn
+          yarn auto -- shipit
+
+      - name: Get latest release
+        id: latest_release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
+          excludes: ${{ env.EXCLUDED_RELEASES }}
+      
+      - name: Increment package version
+        shell: bash
+        run: |
+          export LATEST_VER=${{ steps.latest_release.outputs.release }}
+          export CURRENT_VER=$(node -e "console.log(require('./package.json').version);")
+
+          if [ "$CURRENT_VER" != "$LATEST_VER" ]
+          then
+            npm --no-git-tag-version version $LATEST_VER --allow-same-version
+            git config --local user.email "$(git log --format='%ae' HEAD^!)"
+            git config --local user.name "$(git log --format='%an' HEAD^!)"
+            git add .
+            git commit -m "pkg (${{ env.CURRENT_BRANCH }}): Upgrade package.json to $LATEST_VER [skip ci]"
+            git push
+          fi
