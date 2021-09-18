@@ -60,7 +60,9 @@ jobs:
         run: |
           export LATEST_VER=${{ steps.latest_release.outputs.release }}
           export CURRENT_VER=$(node -e "console.log(require('./package.json').version);")
-
+          
+          echo CURRENT_VER=$CURRENT_VER
+          echo LATEST_VER=$LATEST_VER
           if [ "$CURRENT_VER" != "$LATEST_VER" ]
           then
             npm --no-git-tag-version version $LATEST_VER --allow-same-version
