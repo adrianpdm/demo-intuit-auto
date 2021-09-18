@@ -1,6 +1,6 @@
 {
   "name": "demo-intuit-auto",
-  "version": "0.0.1",
+  "version": "0.1.0-next.1",
   "description": "`intuit/auto` demo for release workflow automation",
   "author": {
     "name": "Adrian",
